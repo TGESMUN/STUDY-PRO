@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="manifest" href="/static/manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#6d28d9">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Study Personalizer">
+    <title>Study Personalizer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <div class="background-blobs">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="page">
+        <div class="top-bar">
+            <button class="theme-btn" onclick="toggleTheme()">🌙 Toggle Theme</button>
+            <button class="reset-btn" onclick="resetQuiz()">🔄 Reset</button>
+        </div>
+
+        <div class="app-card">
+            <h1>🧠 Study Personalizer</h1>
+            <p class="subtitle">Answer 10 questions to discover your study style and get smart suggestions.</p>
+
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+
+            <form method="POST" id="quizForm">
+
+                <div class="step active">
+                    <h2>1. When do you study best?</h2>
+                    <select name="q1" required>
+                        <option value="">Select</option>
+                        <option value="night">At night</option>
+                        <option value="morning">In the morning</option>
+                    </select>
+                    <button type="button" onclick="nextStep()">Next</button>
+                </div>
+
+                <div class="step">
+                    <h2>2. Do you procrastinate often?</h2>
+                    <select name="q2" required>
+                        <option value="">Select</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    <button type="button" onclick="prevStep()">Back</button>
+                    <button type="button" onclick="nextStep()">Next</button>
+                </div>
+
+                <div class="step">
+                    <h2>3. Do you follow a schedule?</h2>
+                    <select name="q3" required>
+                        <option value="">Select</option>
+                        <option value="yes">Always</option>
+                        <option value="sometimes">Sometimes</option>
+                        <option value="no">Never</option>
+                    </select>
+                    <button type="button" onclick="prevStep()">Back</button>
+                    <button type="button" onclick="nextStep()">Next</button>
+                </div>
+
+                <div class="step">
+                    <h2>4. Does your phone distract you?</h2>
+                    <select name="q4" required>
+                        <option value="">Select</option>
+                        <option value="yes">A lot</option>
+                        <option value="sometimes">Sometimes</option>
+                        <option value="no">Rarely</option>
+                    </select>
+                    <button type="button" onclick="prevStep()">Back</button>
+                    <button type="button" onclick="nextStep()">Next</button>
+                </div>
+
+                <div class="step">
+                    <h2>5. How do you prefer to study?</h2>
+                    <select name="q5" required>
+                        <option value="">Select</option>
+                        <option value="short">Short sessions</option>
+                        <option value="long">Long sessions</option>
+                    </select>
+                    <button type="button" onclick="prevStep()">Back</button>
+                    <button type="button" onclick="nextStep()">Next</button>
+                </div>
+
+                <div class="step">
+                    <h2>6. What kind of environment helps you?</h2>
+                    <select name="q6" required>
+                        <option value="">Select</option>
+                        <option value="music">Soft music</option>
+                        <option value="silent">Silence</option>
+                        <option value="cafe">Mild background noise</option>
+                    </select>
+                    <button type="button" onclick="prevStep()">Back</button>
+                    <button type="button" onclick="nextStep()">Next</button>
+                </div>
+
+                <div class="step">
+                    <h2>7. How do you learn best?</h2>
+                    <select name="q7" required>
+                        <option value="">Select</option>
+                        <option value="visual">Charts / diagrams</option>
+                        <option value="reading">Reading notes</option>
+                        <option value="practice">Practice questions</option>
+                    </select>
+                    <button type="button" onclick="prevStep()">Back</button>
+                    <button type="button" onclick="nextStep()">Next</button>
+                </div>
+
+                <div class="step">
+                    <h2>8. When do you start assignments?</h2>
+                    <select name="q8" required>
+                        <option value="">Select</option>
+                        <option value="early">Very early</option>
+                        <option value="normal">A few days before</option>
+                        <option value="late">Last minute</option>
+                    </select>
+                    <button type="button" onclick="prevStep()">Back</button>
+                    <button type="button" onclick="nextStep()">Next</button>
+                </div>
+
+                <div class="step">
+                    <h2>9. Do you prefer group study or solo study?</h2>
+                    <select name="q9" required>
+                        <option value="">Select</option>
+                        <option value="alone">Alone</option>
+                        <option value="group">Group</option>
+                    </select>
+                    <button type="button" onclick="prevStep()">Back</button>
+                    <button type="button" onclick="nextStep()">Next</button>
+                </div>
+
+                <div class="step">
+                    <h2>10. Which sounds more like you?</h2>
+                    <select name="q10" required>
+                        <option value="">Select</option>
+                        <option value="planner">I plan everything</option>
+                        <option value="freestyle">I go with the flow</option>
+                    </select>
+                    <button type="button" onclick="prevStep()">Back</button>
+                    <button type="submit">Analyze</button>
+                </div>
+
+            </form>
+
+            {% if result %}
+            <div class="result-card">
+                <h2 class="result-title" style="color: {{ result.color }};">{{ result.title }}</h2>
+                <p>{{ result.description }}</p>
+
+                <h3>Suggestions for you</h3>
+                <ul>
+                    {% for tip in result.tips %}
+                    <li>{{ tip }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
